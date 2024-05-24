@@ -3,10 +3,11 @@ CPPFLAGS=	-DHAVE_KALLOC
 INCLUDES=
 OBJS=		kthread.o kalloc.o misc.o bseq.o sketch.o sdust.o options.o index.o \
 			lchain.o align.o hit.o seed.o map.o format.o pe.o esterr.o splitidx.o \
-			ksw2_ll_sse.o
+			ksw2_ll_sse.o query_server.o
 PROG=		minimap2
 PROG_EXTRA=	sdust minimap2-lite
 LIBS=		-lm -lz -lpthread
+#LDFLAGS=	-L/cluster/home/sgoswami/opt/lib
 
 ifneq ($(aarch64),)
 	arm_neon=1
@@ -42,7 +43,7 @@ endif
 .SUFFIXES:.c .o
 
 .c.o:
-		$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INCLUDES) $< -o $@
+		$(CC) -c $(CFLAGS) -fPIC $(CPPFLAGS) $(INCLUDES) $< -o $@
 
 all:$(PROG)
 
@@ -56,6 +57,9 @@ minimap2-lite:example.o libminimap2.a
 
 libminimap2.a:$(OBJS)
 		$(AR) -csru $@ $(OBJS)
+
+libminimap2.so:$(OBJS)
+		$(CC) $(CFLAGS) -o $@ $(OBJS) -shared -L. $(LDFLAGS) $(LIBS)
 
 sdust:sdust.c kalloc.o kalloc.h kdq.h kvec.h kseq.h ketopt.h sdust.h
 		$(CC) -D_SDUST_MAIN $(CFLAGS) $< kalloc.o -o $@ -lz
@@ -134,3 +138,4 @@ sdust.o: kalloc.h kdq.h kvec.h sdust.h
 seed.o: mmpriv.h minimap.h bseq.h kseq.h kalloc.h ksort.h
 sketch.o: kvec.h kalloc.h mmpriv.h minimap.h bseq.h kseq.h
 splitidx.o: mmpriv.h minimap.h bseq.h kseq.h
+query_server.o: kvec.h kalloc.h sdust.h mmpriv.h minimap.h bseq.h kseq.h

@@ -415,6 +415,11 @@ int mm_idx_bed_junc(const mm_idx_t *mi, int32_t ctg, int32_t st, int32_t en, uin
 void mm_mapopt_init(mm_mapopt_t *opt);
 mm_idx_t *mm_idx_build(const char *fn, int w, int k, int flag, int n_threads);
 
+/// query server
+#define LATENCY_STAGE 4
+void* mmidx_build(char *ref);
+void mm_get_counts(void *index, const char *seq, int len, unsigned long *stats, void *tbuf);
+
 #ifdef __cplusplus
 }
 #endif

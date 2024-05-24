@@ -251,7 +251,7 @@ def fastx_read(fn, read_comment=False):
 	cdef cmappy.kseq_t *ks
 	ks = cmappy.mm_fastx_open(str.encode(fn))
 	if ks is NULL: return None
-	while cmappy.kseq_read(ks) >= 0:
+	while cmappy.kseq2_read(ks) >= 0:
 		if ks.qual.l > 0: qual = ks.qual.s if isinstance(ks.qual.s, str) else ks.qual.s.decode()
 		else: qual = None
 		name = ks.name.s if isinstance(ks.name.s, str) else ks.name.s.decode()
